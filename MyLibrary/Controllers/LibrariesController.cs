@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MyLibrary.Data;
 using MyLibrary.Models;
+using MyLibrary.ViewModels;
 
 namespace MyLibrary.Controllers
 {
@@ -32,15 +33,31 @@ namespace MyLibrary.Controllers
             {
                 return NotFound();
             }
-
-            var library = await _context.Library
+            // Create a new LibraryViewModel object
+            Library? library = await _context.Library
                 .FirstOrDefaultAsync(m => m.Id == id);
+            List<Shelf>? shelves;
+            // Checks if the shelves list in the library object is not null
+            if (library.Shelves != null)
+            {
+                shelves = library.Shelves;
+            }
+            else
+            {
+                shelves = new List<Shelf>();
+            }
+            var viewModel = new LibraryViewModel
+            {
+                Library = library,
+                Shelves = shelves
+            };
+
             if (library == null)
             {
                 return NotFound();
             }
 
-            return View(library);
+            return View(viewModel);
         }
 
         // GET: Libraries/Create
@@ -148,6 +165,9 @@ namespace MyLibrary.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        
+
 
         private bool LibraryExists(int id)
         {

@@ -149,6 +149,28 @@ namespace MyLibrary.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // POST: Creates a new shelf for a specific library
+        // Gets the library id, the weight an height  as a parameter
+        // Creates a new shelf with the library id
+        // Redirects to the library details page
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateShelf(int libraryId, int width, int height)
+        {
+            // Get the library by id
+            Library library = await _context.Library.FindAsync(libraryId);
+
+
+            Shelf shelf = new Shelf();
+            shelf.Width = width;
+            shelf.Height = height;
+            shelf.Library = library;
+            _context.Add(shelf);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Libraries", new { id = libraryId });
+        }
+        
+
         private bool ShelfExists(int id)
         {
             return _context.Shelf.Any(e => e.Id == id);

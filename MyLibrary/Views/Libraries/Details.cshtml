@@ -1,4 +1,4 @@
-﻿@model MyLibrary.Models.Library
+﻿@model MyLibrary.ViewModels.LibraryViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,14 +11,37 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Genre)
+            @Html.DisplayNameFor(model => model.Library.Genre)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Genre)
+            @Html.DisplayFor(model => model.Library.Genre)
         </dd>
     </dl>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Shelves)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Shelves)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Height)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Width)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-action="CreateShelves" asp-route-id="@Model?.Library.Id">Add a shelf</a>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.Library.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
