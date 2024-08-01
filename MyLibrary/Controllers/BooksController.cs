@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using MyLibrary.Data;
 using MyLibrary.Models;
+using MyLibrary.ViewModels;
 
 namespace MyLibrary.Controllers
 {
@@ -46,7 +48,12 @@ namespace MyLibrary.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            return View();
+            BookSetViewModel bookViewModel = new BookSetViewModel();
+            // Get all of the liberies into a list
+            List<Library> libraries = new List<Library>();
+            libraries = _context.Library.ToList();
+            bookViewModel.Libraries = libraries;
+            return View(bookViewModel);
         }
 
         // POST: Books/Create
@@ -54,16 +61,147 @@ namespace MyLibrary.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Width,Height")] Book book)
+        public async Task<IActionResult> Create(BookSetViewModel bookViewModel)
         {
-            if (ModelState.IsValid)
+            if (!IsShelves(bookViewModel))
             {
-                _context.Add(book);
+                ViewData["Error"] = "There is no shelves in the library";
+            }
+            else if (!IsHighEnough(bookViewModel))
+            {
+                ViewData["Error"] = "There is no shelves that are high enough";
+            }
+            else if (!IsSpace(bookViewModel))
+            {
+                ViewData["Error"] = "There is no space in the exsisting shelves";
+            }
+            else
+            {
+                int shelfId;
+                if (IsLessThenTen(bookViewModel))
+                {
+                    shelfId = GetCompactShelfId(bookViewModel);
+                }
+                else
+                {
+                    shelfId = GetShelfId(bookViewModel);
+                    ViewData["Error"] = "There is no shelves that have less than 10 cm of space in comparison to the book. However, we inserted the book into a non optimal shelf";
+                }
+                bookViewModel.Book.ShelfId = shelfId;
+                _context.Add(bookViewModel.Book);
+                var shelf = _context.Shelf.Find(shelfId);
+                shelf.FreeSpace -= bookViewModel.Book.Width;
+                _context.Update(shelf);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(book);
+            return View(bookViewModel);
         }
+
+        // A function to check if there is any shelves in the library
+        private bool IsShelves(BookSetViewModel bookViewModel)
+        {
+            bool shelves = false;
+            int shelvesAmount = _context.Shelf
+                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .Count();
+            if (shelvesAmount > 0)
+            {
+                shelves = true;
+            }
+            return shelves;
+        }
+
+        // A function to check if there is any shelves that are high enough
+        private bool IsHighEnough(BookSetViewModel bookViewModel)
+        {
+            bool highEnough = false;
+            List<Shelf> shelves = _context.Shelf
+                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .ToList();
+            foreach (Shelf shelf in shelves)
+            {
+                if (shelf.Height >= bookViewModel.Book.Height)
+                {
+                    highEnough = true;
+                    break;
+                }
+            }
+            return highEnough;
+        }
+
+        // A function to check if there is any space in the exsisting shelves
+        private bool IsSpace(BookSetViewModel bookViewModel)
+        {
+            bool space = false;
+            List<Shelf> shelves = _context.Shelf
+                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .ToList();
+            foreach(Shelf shelf in shelves)
+            {
+                if (shelf.FreeSpace > bookViewModel.Book.Width)
+                {
+                    space = true;
+                    break;
+                }
+            }
+            return space;
+        }
+
+        // A function that checks if there is any shelves that have less than 10 cm of space in comparison to the book
+        private bool IsLessThenTen(BookSetViewModel bookViewModel)
+        {
+            bool tenLess = false;
+            List<Shelf> shelves = _context.Shelf
+                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .ToList();
+            foreach (Shelf shelf in shelves)
+            {
+                if (bookViewModel.Book.Height + 10 > shelf.Height)
+                {
+                    tenLess = true;
+                }
+            }
+            return tenLess;
+        }
+
+        // A function that returns the id of the first shelf that has enough space
+        private int GetShelfId(BookSetViewModel bookViewModel)
+        {
+            int shelfId = 0;
+            List<Shelf> shelves = _context.Shelf
+                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .ToList();
+            foreach (Shelf shelf in shelves)
+            {
+                if (shelf.FreeSpace > 0)
+                {
+                    shelfId = shelf.Id;
+                    break;
+                }
+            }
+            return shelfId;
+        }
+
+        // A function that returns the id of the first shelf that has less than 10 cm of space in comparison to the book
+        private int GetCompactShelfId(BookSetViewModel bookViewModel)
+        {
+            int shelfId = 0;
+            List<Shelf> shelves = _context.Shelf
+                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .ToList();
+            foreach (Shelf shelf in shelves)
+            {
+                if (bookViewModel.Book.Height + 10 > shelf.Height)
+                {
+                       shelfId = shelf.Id;
+                    break;
+                }
+            }
+            return shelfId;
+        }
+
+
 
         // GET: Books/Edit/5
         public async Task<IActionResult> Edit(int? id)

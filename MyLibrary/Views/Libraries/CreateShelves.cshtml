@@ -5,3 +5,30 @@
 }
 
 <h1>Create Shelf</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="CreateShelf">
+            
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Shelf.LibraryId" value="@Model.Library.Id" />
+            <div class="form-group">
+                <label asp-for="Shelf.Height" class="control-label"></label>
+                <input asp-for="Shelf.Height" class="form-control" />
+                <span asp-validation-for="Shelf.Height" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Shelf.Width" class="control-label"></label>
+                <input asp-for="Shelf.Width" class="form-control" />
+                <span asp-validation-for="Shelf.Width" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

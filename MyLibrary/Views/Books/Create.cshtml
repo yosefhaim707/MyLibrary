@@ -1,4 +1,4 @@
-﻿@model MyLibrary.Models.Book
+﻿@model MyLibrary.ViewModels.BookSetViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -12,20 +12,42 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-warning">@ViewBag.Message</div>
+
+            }
+           
+
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="@Model.Libraries" class="control-label"></label>
+                <input asp-for="@Model.Libraries" class="form-control" />
+                <span asp-validation-for="@Model.Libraries" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Width" class="control-label"></label>
-                <input asp-for="Width" class="form-control" />
-                <span asp-validation-for="Width" class="text-danger"></span>
+                <label asp-for="Book.Name" class="control-label"></label>
+                <input asp-for="Book.Name" class="form-control" />
+                <span asp-validation-for="Book.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Height" class="control-label"></label>
-                <input asp-for="Height" class="form-control" />
-                <span asp-validation-for="Height" class="text-danger"></span>
+                <label asp-for="Book.Width" class="control-label"></label>
+                <input asp-for="Book.Width" class="form-control" />
+                <span asp-validation-for="Book.Width" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Book.Height" class="control-label"></label>
+                <input asp-for="Book.Height" class="form-control" />
+                <span asp-validation-for="Book.Height" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <select asp-for="LibraryId">
+                    @foreach(var library in Model.Libraries)
+                    {
+                        <option value="@library.Id">@library.Genre</option>
+                    })
+                </select>
+                
+                
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

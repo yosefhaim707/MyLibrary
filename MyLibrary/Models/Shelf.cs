@@ -9,8 +9,8 @@ namespace MyLibrary.Models
         public List<BookSet>? BookSets { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public int LibraryId { get; set; }
         public Library Library { get; set; }
-        [NotMapped]
         public int FreeSpace {  get; set; }
         
     }

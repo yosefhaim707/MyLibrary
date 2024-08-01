@@ -45,6 +45,8 @@ namespace MyLibrary.Controllers
             else
             {
                 shelves = new List<Shelf>();
+                // Get all the shelves that belong to the library with the given id
+                shelves = await _context.Shelf.Where(s => s.LibraryId == id).ToListAsync();
             }
             var viewModel = new LibraryViewModel
             {
@@ -166,7 +168,31 @@ namespace MyLibrary.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        
+        // GET: Libraries/CreateShelf
+        public async Task<IActionResult> CreateShelves(int Id)
+        {
+            LibraryViewModel libraryViewModel = new LibraryViewModel();
+            libraryViewModel.Library = await _context.Library.FirstOrDefaultAsync(m => m.Id == Id);
+            return View(libraryViewModel);
+        }
+
+
+        // POST: Libraries/CreateShelf
+        // Create a new shelf and add it to the library that has the given libraryId
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateShelf(LibraryViewModel libraryViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                Shelf shelf = libraryViewModel.Shelf;
+                shelf.FreeSpace = shelf.Width;
+                _context.Add(shelf);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Details), new { id = libraryViewModel.Shelf.LibraryId });
+            }
+            return View();
+        }
 
 
         private bool LibraryExists(int id)
