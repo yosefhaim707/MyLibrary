@@ -175,7 +175,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (shelf.FreeSpace > 0)
+                if (shelf.FreeSpace >= bookSetViewModel.BookSet.Width)
                 {
                     shelfId = shelf.Id;
                     break;
@@ -185,15 +185,15 @@ namespace MyLibrary.Controllers
         }
 
         // A function that returns the id of the first shelf that has less than 10 cm of space in comparison to the book
-        private int GetCompactShelfId(BookSetViewModel bookViewModel)
+        private int GetCompactShelfId(BookSetViewModel bookSetViewModel)
         {
             int shelfId = 0;
             List<Shelf> shelves = _context.Shelf
-                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .Where(s => s.LibraryId == bookSetViewModel.LibraryId)
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (bookViewModel.BookSet.Height + 10 > shelf.Height)
+                if (bookSetViewModel.BookSet.Height + 10 > shelf.Height && shelf.FreeSpace >= bookSetViewModel.BookSet.Width)
                 {
                     shelfId = shelf.Id;
                     break;
