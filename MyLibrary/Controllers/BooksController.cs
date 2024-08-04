@@ -9,6 +9,7 @@ using Microsoft.Identity.Client;
 using MyLibrary.Data;
 using MyLibrary.Models;
 using MyLibrary.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MyLibrary.Controllers
 {
@@ -22,8 +23,9 @@ namespace MyLibrary.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string error)
         {
+            ViewData["Error"] = error;
             return View(await _context.Book.ToListAsync());
         }
 
@@ -94,7 +96,7 @@ namespace MyLibrary.Controllers
                 shelf.FreeSpace -= bookViewModel.Book.Width;
                 _context.Update(shelf);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new {  error = "There is no shelves that have less than 10 cm of space in comparison to the book. However, we inserted the book into a non optimal shelf" });
             }
             ViewData["List"] = _context.Library.ToList();
             return View(bookViewModel);
