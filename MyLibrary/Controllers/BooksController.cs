@@ -53,6 +53,7 @@ namespace MyLibrary.Controllers
             List<Library> libraries = new List<Library>();
             libraries = _context.Library.ToList();
             bookViewModel.Libraries = libraries;
+            ViewData["List"] = libraries;
             return View(bookViewModel);
         }
 
@@ -95,6 +96,7 @@ namespace MyLibrary.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["List"] = _context.Library.ToList();
             return View(bookViewModel);
         }
 

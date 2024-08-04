@@ -41,7 +41,7 @@
             </div>
             <div class="form-group">
                 <select asp-for="LibraryId">
-                    @foreach(var library in Model.Libraries)
+                    @foreach(var library in ViewBag.List)
                     {
                         <option value="@library.Id">@library.Genre</option>
                     })
