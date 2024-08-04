@@ -176,7 +176,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (shelf.FreeSpace > bookViewModel.Book.Width)
+                if (shelf.FreeSpace >= bookViewModel.Book.Width)
                 {
                     shelfId = shelf.Id;
                     break;
@@ -194,7 +194,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (bookViewModel.Book.Height + 10 > shelf.Height && shelf.FreeSpace > bookViewModel.Book.Width)
+                if (bookViewModel.Book.Height + 10 >= shelf.Height && shelf.FreeSpace > bookViewModel.Book.Width)
                 {
                     shelfId = shelf.Id;
                     break;

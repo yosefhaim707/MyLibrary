@@ -193,7 +193,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (bookSetViewModel.BookSet.Height + 10 > shelf.Height && shelf.FreeSpace >= bookSetViewModel.BookSet.Width)
+                if (bookSetViewModel.BookSet.Height + 10 >= shelf.Height && shelf.FreeSpace >= bookSetViewModel.BookSet.Width)
                 {
                     shelfId = shelf.Id;
                     break;
@@ -280,6 +280,9 @@ namespace MyLibrary.Controllers
             var bookSet = await _context.BookSet.FindAsync(id);
             if (bookSet != null)
             {
+                var shelf = _context.Shelf.Find(bookSet.ShelfId);
+                shelf.FreeSpace += bookSet.Width;
+                _context.Update(shelf);
                 _context.BookSet.Remove(bookSet);
             }
 
