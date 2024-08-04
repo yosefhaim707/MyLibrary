@@ -282,6 +282,9 @@ namespace MyLibrary.Controllers
             var book = await _context.Book.FindAsync(id);
             if (book != null)
             {
+                var shelf = _context.Shelf.Find(book.ShelfId);
+                shelf.FreeSpace += book.Width;
+                _context.Update(shelf);
                 _context.Book.Remove(book);
             }
 
