@@ -48,7 +48,7 @@ namespace MyLibrary.Controllers
         // GET: Books/Create
         public IActionResult Create()
         {
-            BookSetViewModel bookViewModel = new BookSetViewModel();
+            BookViewModel bookViewModel = new BookViewModel();
             // Get all of the liberies into a list
             List<Library> libraries = new List<Library>();
             libraries = _context.Library.ToList();
@@ -61,7 +61,7 @@ namespace MyLibrary.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BookSetViewModel bookViewModel)
+        public async Task<IActionResult> Create(BookViewModel bookViewModel)
         {
             if (!IsShelves(bookViewModel))
             {
@@ -99,7 +99,7 @@ namespace MyLibrary.Controllers
         }
 
         // A function to check if there is any shelves in the library
-        private bool IsShelves(BookSetViewModel bookViewModel)
+        private bool IsShelves(BookViewModel bookViewModel)
         {
             bool shelves = false;
             int shelvesAmount = _context.Shelf
@@ -113,7 +113,7 @@ namespace MyLibrary.Controllers
         }
 
         // A function to check if there is any shelves that are high enough
-        private bool IsHighEnough(BookSetViewModel bookViewModel)
+        private bool IsHighEnough(BookViewModel bookViewModel)
         {
             bool highEnough = false;
             List<Shelf> shelves = _context.Shelf
@@ -131,15 +131,15 @@ namespace MyLibrary.Controllers
         }
 
         // A function to check if there is any space in the exsisting shelves
-        private bool IsSpace(BookSetViewModel bookViewModel)
+        private bool IsSpace(BookViewModel bookSetViewModel)
         {
             bool space = false;
             List<Shelf> shelves = _context.Shelf
-                .Where(s => s.LibraryId == bookViewModel.LibraryId)
+                .Where(s => s.LibraryId == bookSetViewModel.LibraryId)
                 .ToList();
             foreach(Shelf shelf in shelves)
             {
-                if (shelf.FreeSpace > bookViewModel.Book.Width)
+                if (shelf.FreeSpace > bookSetViewModel.Book.Width)
                 {
                     space = true;
                     break;
@@ -149,7 +149,7 @@ namespace MyLibrary.Controllers
         }
 
         // A function that checks if there is any shelves that have less than 10 cm of space in comparison to the book
-        private bool IsLessThenTen(BookSetViewModel bookViewModel)
+        private bool IsLessThenTen(BookViewModel bookViewModel)
         {
             bool tenLess = false;
             List<Shelf> shelves = _context.Shelf
@@ -166,7 +166,7 @@ namespace MyLibrary.Controllers
         }
 
         // A function that returns the id of the first shelf that has enough space
-        private int GetShelfId(BookSetViewModel bookViewModel)
+        private int GetShelfId(BookViewModel bookViewModel)
         {
             int shelfId = 0;
             List<Shelf> shelves = _context.Shelf
@@ -184,7 +184,7 @@ namespace MyLibrary.Controllers
         }
 
         // A function that returns the id of the first shelf that has less than 10 cm of space in comparison to the book
-        private int GetCompactShelfId(BookSetViewModel bookViewModel)
+        private int GetCompactShelfId(BookViewModel bookViewModel)
         {
             int shelfId = 0;
             List<Shelf> shelves = _context.Shelf

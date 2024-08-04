@@ -1,4 +1,4 @@
-﻿@model MyLibrary.ViewModels.BookSetViewModel
+﻿@model MyLibrary.ViewModels.BookViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -12,9 +12,9 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @if (ViewBag.Message != null)
+            @if (ViewBag.Error != null)
             {
-                <div class="alert alert-warning">@ViewBag.Message</div>
+                <div class="alert alert-warning">@ViewBag.Error</div>
 
             }
            

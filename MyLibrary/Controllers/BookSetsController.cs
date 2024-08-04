@@ -86,10 +86,10 @@ namespace MyLibrary.Controllers
                     shelfId = GetShelfId(bookSetViewModel);
                     ViewData["Error"] = "There is no shelves that have less than 10 cm of space in comparison to the book. However, we inserted the book into a non optimal shelf";
                 }
-                bookSetViewModel.Book.ShelfId = shelfId;
-                _context.Add(bookSetViewModel.Book);
+                bookSetViewModel.BookSet.ShelfId = shelfId;
+                _context.Add(bookSetViewModel.BookSet);
                 var shelf = _context.Shelf.Find(shelfId);
-                shelf.FreeSpace -= bookSetViewModel.Book.Width;
+                shelf.FreeSpace -= bookSetViewModel.BookSet.Width;
                 _context.Update(shelf);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -120,7 +120,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (shelf.Height >= bookSetViewModel.Book.Height)
+                if (shelf.Height >= bookSetViewModel.BookSet.Height)
                 {
                     highEnough = true;
                     break;
@@ -138,7 +138,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (shelf.FreeSpace > bookViewModel.Book.Width)
+                if (shelf.FreeSpace > bookViewModel.BookSet.Width)
                 {
                     space = true;
                     break;
@@ -156,7 +156,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (bookViewModel.Book.Height + 10 > shelf.Height)
+                if (bookViewModel.BookSet.Height + 10 > shelf.Height)
                 {
                     tenLess = true;
                 }
@@ -191,7 +191,7 @@ namespace MyLibrary.Controllers
                 .ToList();
             foreach (Shelf shelf in shelves)
             {
-                if (bookViewModel.Book.Height + 10 > shelf.Height)
+                if (bookViewModel.BookSet.Height + 10 > shelf.Height)
                 {
                     shelfId = shelf.Id;
                     break;
